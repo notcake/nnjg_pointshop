@@ -18,7 +18,7 @@ ITEM.Functions = {
 		ent:SetModelScale(Vector(0.8, 0.8, 0.8))
 		pos = pos + (ang:Forward() * -4) + (ang:Up())
 		ang:RotateAroundAxis(ang:Right(), 20)
-		return ent, {Pos = pos, Ang = ang}
+		return ent, pos, ang
 	end,
 }
 
