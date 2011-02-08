@@ -1,5 +1,5 @@
 ITEM.Name = "Low Gravity"
-ITEM.Enabled = true
+ITEM.Enabled = false
 ITEM.Description = "Sets low gravity on yourself when you spawn."
 ITEM.Cost = 200
 ITEM.Model = "models/weapons/w_toolgun.mdl"
@@ -17,7 +17,10 @@ ITEM.Functions = {
 
 ITEM.Hooks = {
 	PlayerSpawn = function(ply, item)
-		ply.OldGravity = ply:GetGravity()
+		if not ply.OldGravity then
+			ply.OldGravity = ply:GetGravity()
+		end
+		
 		ply:SetGravity(0.3)
 	end
 }

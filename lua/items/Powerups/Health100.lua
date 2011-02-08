@@ -1,5 +1,5 @@
 ITEM.Name = "100 Health"
-ITEM.Enabled = true
+ITEM.Enabled = false
 ITEM.Description = "Gives you 100 more health."
 ITEM.Cost = 100
 ITEM.Model = "models/props_combine/health_charger001.mdl"
@@ -10,7 +10,9 @@ ITEM.Functions = {
 	end,
 	
 	OnTake = function(ply, item)
-		ply:SetHealth(ply:Health() - 100)
+		if ply:Health() > 100 then
+			ply:SetHealth(ply:Health() - 100)
+		end
 	end
 }
 

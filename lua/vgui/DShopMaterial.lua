@@ -9,13 +9,18 @@ function PANEL:Init()
 	
 	self.Info = ""
 	self.InfoHeight = 14
+	self.BarColor = Color(50, 0, 0, 125)
+	
+	self.InShop = false
 end
 
-function PANEL:SetData(data)
+function PANEL:SetData(data, buy)
 	self.Data = data
-	self.Info = data.Name
+	self.Info = buy and data.Functions.GetShopName(LocalPlayer(), data) or data.Functions.GetName(LocalPlayer(), data)
 	self:SetMaterial(data.Material)
 	self:SetTooltip(data.Description)
+	
+	self.InShop = buy
 	
 	if LocalPlayer():PS_CanAfford(self.Data.Cost) then
 		self.BarColor = Color(0, 50, 0, 125)
@@ -38,14 +43,14 @@ end
 
 function PANEL:OnCursorEntered()
 	if self.Sell then
-		self.Info = "Sell: " .. POINTSHOP.Config.SellCost(self.Data.Cost)
+		self.Info = "Sell: " .. POINTSHOP.Config.SellCost(self.Data.Cost) * LocalPlayer():PS_GetItemCount(self.Data.ID)
 	else
 		self.Info = "Buy: " .. self.Data.Cost
 	end
 end
 
 function PANEL:OnCursorExited()
-	self.Info = self.Data.Name
+	self.Info = self.InShop and self.Data.Functions.GetShopName(LocalPlayer(), self.Data) or self.Data.Functions.GetName(LocalPlayer(), self.Data)
 end
 
 vgui.Register("DShopMaterial", PANEL, "Material")

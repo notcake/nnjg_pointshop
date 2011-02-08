@@ -1,5 +1,5 @@
 ITEM.Name = "100 Armor"
-ITEM.Enabled = true
+ITEM.Enabled = false
 ITEM.Description = "Gives you 100 more armor."
 ITEM.Cost = 100
 ITEM.Model = "models/props_combine/suit_charger001.mdl"

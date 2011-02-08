@@ -5,7 +5,7 @@ function POINTSHOP.FindItemByID(item_id)
 		if category.Enabled then
 			for name, item in pairs(category.Items) do
 				if item.Enabled then
-					if string.lower( name ) == string.lower( item_id ) then
+					if name == item_id then
 						return item
 					end
 				end
@@ -19,7 +19,7 @@ end
 function POINTSHOP.FindCategoryByItemID(item_id)
 	for id, category in pairs(POINTSHOP.Items) do
 		for name, item in pairs(category.Items) do
-			if string.lower( name ) == string.lower( item_id ) then
+			if name == item_id then
 				return category
 			end
 		end
@@ -35,6 +35,19 @@ function POINTSHOP.ValidateItems(items)
 		end
 	end
 	return items
+end
+
+function POINTSHOP.ValidateItemCounts(ply, itemcounts)
+	local toremove = {}
+	for item_id, _ in pairs(itemcounts) do
+		if not ply:PS_HasItem(item_id) then
+			toremove[#toremove + 1] = item_id
+		end
+	end
+	for _, item_id in ipairs(toremove) do
+		itemcounts[item_id] = nil
+	end
+	return itemcounts
 end
 
 function POINTSHOP.FindPlayerByName(name)

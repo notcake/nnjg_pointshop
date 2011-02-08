@@ -1,34 +1,16 @@
-KeyToHook = {
+POINTSHOP.Hats = {}
+
+local KeyToHook = {
 	F1 = "ShowHelp",
 	F2 = "ShowTeam",
 	F3 = "ShowSpare1",
-	F4 = "ShowSpare2"
+	F4 = "ShowSpare2",
+	None = "ThisHookDoesNotExist"
 }
 
-local meta = FindMetaTable("Player")
-function meta:IsObserver()
-
-	return ( self:GetObserverMode() > OBS_MODE_NONE )
-	
+function _R.Player:IsObserver()
+	return self:GetObserverMode() > OBS_MODE_NONE
 end
-
-hook.Add("Tick", "PointShop_RemoveTrial", function()
-	for k, v in pairs( player.GetAll() ) do
-		if v.Trail then
-			if !v:Alive() or v:IsObserver() then
-				SafeRemoveEntity( v.Trail )
-				v.Trail = nil
-			end
-		end
-		
-		if v.Hat then
-			if !v:Alive() or v:IsObserver() then
-				SafeRemoveEntity( v.Hat )
-				v.Hat = nil
-			end
-		end
-	end
-end)
 
 hook.Add("PlayerDeath", "PointShop_PlayerDeath", function(victim, inflictor, attacker)
 	if attacker:IsPlayer() and attacker:IsValid() then
@@ -59,20 +41,25 @@ hook.Add("PlayerDeath", "PointShop_PlayerDeath", function(victim, inflictor, att
 end)
 
 hook.Add(KeyToHook[POINTSHOP.Config.ShopKey], "PointShop_ShopKey", function(ply)
-	ply:PS_ShowShop(true)
+	if ply:Alive() and not ply:IsObserver() then
+		ply:PS_ShowShop(true)
+	end
 end)
 
 hook.Add("PlayerInitialSpawn", "PointShop_PlayerInitialSpawn", function(ply)
-	ply.Points = 0
-	ply.Items = {}
-	
+	ply:PS_LoadItems()
 	timer.Simple(1, function()
 		ply:PS_UpdatePoints()
-		ply:PS_LoadItems()
+		ply:PS_UpdateItems()
+		ply:PS_SendHats()
 	end)
 	
 	if POINTSHOP.Config.PointsTimer then
 		timer.Create("PointShop_" .. ply:UniqueID(), 60 * POINTSHOP.Config.PointsTimerDelay, 0, function(ply)
+			if not ply then return end
+			if not ply:IsValid() then
+				timer.Destroy("PointShop_" .. ply:UniqueID())
+			end
 			ply:PS_GivePoints(POINTSHOP.Config.PointsTimerAmount, POINTSHOP.Config.PointsTimerDelay .. " minutes on server")
 		end, ply)
 	end
@@ -82,51 +69,127 @@ hook.Add("PlayerInitialSpawn", "PointShop_PlayerInitialSpawn", function(ply)
 	end
 end)
 
--- Add a hook for each hook in each item.
-hook.Add( "InitPostEntity", "LetsTryThisShallWe", function()
-	for id, category in pairs(POINTSHOP.Items) do
-		if category.Enabled then
-			for item_id, item in pairs(category.Items) do
-				if item.Enabled then
-					if item.Hooks then
-						for name, func in pairs(item.Hooks) do
-							hook.Add(name, "PointShop_" .. item_id .. "_" .. name, function(ply, ...) -- Pass any arguments through.
-								if ply:PS_HasItem(item_id) then -- only run the hook if the player actually has this item.
-									item.ID = item_id -- Pass the ID incase it's needed in the hook.
-									return func(ply, item, unpack({...}))
+hook.Add("DoPlayerDeath", "PointShop_CloseShop", function(ply)
+	ply:PS_ShowShop(false)
+end)
+
+-- Point trading
+hook.Add("PlayerSay", "PointShop_Give", function(ply, text)
+	text = text:lower():gsub("[ ]+", " ")
+	local bits = string.Explode(" ", text)
+	if bits[1] == "!give" or bits[1] == "/give" then
+		if not bits[2] then
+			ply:PS_Notify("You need to specify a player to give points to.")
+			return
+		end
+		if not bits[3] then
+			ply:PS_Notify("You need to specify the number of points you want to give out.")
+			return
+		end
+		local name = bits[2]:lower()
+		local amount = tonumber(bits[3] or 0)
+		local found = 0
+		local targetply = nil
+		for _, v in ipairs(player.GetAll()) do
+			if v:Name():lower():find(name) then
+				targetply = v
+				found = found + 1
+			end
+		end
+		if found == 0 then
+			ply:PS_Notify("There are no players with that name.")
+			return
+		elseif found > 1 then
+			ply:PS_Notify("There's more than one player with that name.")
+			return
+		end
+		if not amount or amount <= 0 then
+			ply:PS_Notify("That's not a valid number of points to give.")
+			return
+		elseif amount > ply:PS_GetPoints() then
+			ply:PS_Notify("You don't have that many points to give out.")
+			return
+		end
+		ply:PS_TakePoints(amount, "sent to " .. targetply:Name())
+		targetply:PS_GivePoints(amount, "gift from " .. ply:Name())
+		return ""
+	end
+end)
+
+for id, category in pairs(POINTSHOP.Items) do
+	if category.Enabled then
+		if category.Hooks then
+			for name, func in pairs(category.Hooks) do
+				hook.Add(name, "PointShop_Category_" .. category.Name .. "_" .. name, function(ply, ...) -- Pass any arguments through.
+					if ply:PS_HasItem(item_id) and not ply:PS_IsItemDisabled(item_id) then -- only run the hook if the player actually has this item.
+						return func(ply, item, unpack({...}))
+					end
+				end)
+			end
+		end
+		for item_id, item in pairs(category.Items) do
+			if item.Enabled then
+				if category.ConstantHooks then
+					item.ConstantHooks = item.ConstantHooks or {}
+					for name, func in pairs(category.ConstantHooks) do
+						item.ConstantHooks[name] = item.ConstantHooks[name] or func
+					end
+				end
+				if item.Hooks then
+					for name, func in pairs(item.Hooks) do
+						hook.Add(name, "PointShop_" .. item_id .. "_" .. name, function(ply, ...) -- Pass any arguments through.
+							if ply:PS_HasItem(item_id) and not ply:PS_IsItemDisabled(item_id) then -- only run the hook if the player actually has this item.
+								if category.PreHooks and category.PreHooks[name] then
+									category.PreHooks[name](ply, item, unpack({...}))
 								end
-							end)
-						end
-					end
-					
-					if item.ConstantHooks then
-						for name, func in pairs(item.ConstantHooks) do
-							hook.Add(name, "PointShop_" .. item_id .. "_Contant_" .. name, function(ply, ...) -- Pass any arguments through.
 								return func(ply, item, unpack({...}))
-							end)
-						end
+							end
+						end)
 					end
-					
-					if item.Model then
-						resource.AddFile(item.Model)
+				end
+				if item.ConstantHooks then
+					for name, func in pairs(item.ConstantHooks) do
+						hook.Add(name, "PointShop_" .. item_id .. "_Constant_" .. name, function(ply, ...) -- Pass any arguments through.
+							item.ID = item_id
+							return func(ply, item, unpack({...}))
+						end)
+					end
+				end
+				if category.Functions then
+					for name, func in pairs(category.Functions) do
+						if item.Functions[name] then
+							local itemfunc = item.Functions[name]
+							item.Functions[name] = function(...)
+								local r1, r2, r3, r4 = itemfunc(...)
+								func(...)
+								return r1, r2, r3, r4
+							end
+						else
+							item.Functions[name] = func
+						end
 					end
 				end
 			end
 		end
 	end
-end)
+end
 
 concommand.Add("pointshop_buy", function(ply, cmd, args)
 	local item_id = args[1]
 	if not item_id then return end
-	
-	if ply:PS_HasItem(item_id) then
-		ply:PS_Notify('You already have this item!')
-		return
-	end
+	if not ply:Alive() or ply:IsObserver() then return end
 	
 	local item = POINTSHOP.FindItemByID(item_id)
 	if not item then return end
+	
+	if ply:PS_HasItem(item_id) and item.Maximum == 1 then
+		ply:PS_Notify('You already have this item!')
+		return
+	end
+	if ply:PS_GetItemCount(item_id) >= item.Maximum then
+		ply:PS_Notify('You can\'t buy any more of this item!')
+		return
+	end
 	
 	local category = POINTSHOP.FindCategoryByItemID(item_id)
 	
@@ -172,17 +235,34 @@ end)
 
 concommand.Add("pointshop_sell", function(ply, cmd, args)
 	local item_id = args[1]
-	if not ply:Alive() then return end
 	if not item_id then return end
+	if not ply:Alive() or ply:IsObserver() then return end
 	
 	if not ply:PS_HasItem(item_id) then return end
 	
-	ply:PS_TakeItem(item_id, true)
+	ply:PS_TakeItem(item_id, true, ply:PS_GetItemCount(item_id))
+end)
+
+concommand.Add("pointshop_disable", function(ply, cmd, args)
+	local item_id = args[1]
+	if not item_id then return end
+	if not ply:Alive() or ply:IsObserver() then return end
+	
+	ply:PS_DisableItem(item_id)
+end)
+
+concommand.Add("pointshop_enable", function(ply, cmd, args)
+	local item_id = args[1]
+	if not item_id then return end
+	if not ply:Alive() or ply:IsObserver() then return end
+	
+	ply:PS_EnableItem(item_id)
 end)
 
 concommand.Add("pointshop_respawn", function(ply, cmd, args)
 	local item_id = args[1]
 	if not item_id then return end
+	if not ply:Alive() or ply:IsObserver() then return end
 	
 	if not ply:PS_HasItem(item_id) then return end
 	
@@ -209,5 +289,75 @@ concommand.Add("pointshop_respawn", function(ply, cmd, args)
 		if item.Respawnable > 0 then
 			ply:SetPData("PS_" .. item_id .. "_Respawns", respawns - 1)
 		end
+	end
+end)
+
+concommand.Add("ps_givepoints", function(ply, cmd, args)
+	-- Give Points
+	if not ply:IsAdmin() then return end
+	
+	local to_give = POINTSHOP.FindPlayerByName(args[1])
+	local num = tonumber(args[2])
+	
+	if not to_give or not num then
+		ply:PS_Notify("Please give a name and number!")
+		return
+	end
+	
+	if not type(to_give) == "player" then
+		if to_give then
+			ply:PS_Notify("You weren't specific enough with the name you typed!")
+		else
+			ply:PS_Notify("No player found by that name!")
+		end
+	else
+		to_give:PS_GivePoints(num, "given by " .. ply:Nick() .. "!")
+	end
+end)
+
+concommand.Add("ps_takepoints", function(ply, cmd, args)
+	-- Take Points
+	if not ply:IsAdmin() then return end
+	
+	local to_take = POINTSHOP.FindPlayerByName(args[1])
+	local num = tonumber(args[2])
+	
+	if not to_take or not num then
+		ply:PS_Notify("Please give a name and number!")
+		return
+	end
+	
+	if not type(to_take) == "player" then
+		if to_take then
+			ply:PS_Notify("You weren't specific enough with the name you typed!")
+		else
+			ply:PS_Notify("No player found by that name!")
+		end
+	else
+		to_take:PS_TakePoints(num, "taken by " .. ply:Nick() .. "!")
+	end
+end)
+
+concommand.Add("ps_setpoints", function(ply, cmd, args)
+	-- Set Points
+	if not ply:IsAdmin() then return end
+	
+	local to_set = POINTSHOP.FindPlayerByName(args[1])
+	local num = tonumber(args[2])
+	
+	if not to_set or not num then
+		ply:PS_Notify("Please give a name and number!")
+		return
+	end
+	
+	if not type(to_set) == "player" then
+		if to_set then
+			ply:PS_Notify("You weren't specific enough with the name you typed!")
+		else
+			ply:PS_Notify("No player found by that name!")
+		end
+	else
+		to_set:PS_SetPoints(num)
+		to_set:PS_Notify("Points set to " .. num .. " by " .. ply:Nick() .. "!")
 	end
 end)

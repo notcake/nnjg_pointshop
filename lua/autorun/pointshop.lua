@@ -3,6 +3,7 @@ if not datastream then require("datastream") end
 if SERVER then
 	AddCSLuaFile("autorun/pointshop.lua")
 	
+	AddCSLuaFile("vgui/DColumnSheet2.lua")
 	AddCSLuaFile("vgui/DShopModel.lua")
 	AddCSLuaFile("vgui/DShopMaterial.lua")
 	
@@ -21,6 +22,7 @@ if SERVER then
 end
 
 if CLIENT then
+	include("vgui/DColumnSheet2.lua")
 	include("vgui/DShopModel.lua")
 	include("vgui/DShopMaterial.lua")
 	

@@ -21,6 +21,6 @@ ITEM.Hooks = {
 		if not ply._OldModel then
 			ply._OldModel = ply:GetModel()
 		end
-		timer.Simple(1, function() ply:SetModel("models/player/classic.mdl") end)
+		timer.Simple(1, function() ply:SetModel(item.Model) end)
 	end
 }
