@@ -156,7 +156,7 @@ usermessage.Hook("PointShop_AddHat", function(um)
 	local ply = Entity(um:ReadLong())
 	local item_id = um:ReadString()
 	
-	if not ply or not item_id then return end
+	if not ply or not ply:IsValid() or not item_id then return end
 	
 	local item = POINTSHOP.FindItemByID(item_id)
 	if not item then return end
@@ -169,6 +169,7 @@ usermessage.Hook("PointShop_AddHat", function(um)
 	
 	local mdl = ClientsideModel(item.Model, RENDERGROUP_OPAQUE)
 	mdl:SetNoDraw(true)
+	mdl:SetParent(ply)
 	
 	ply._Hats[item_id] = {
 		Model = mdl,
@@ -182,7 +183,7 @@ usermessage.Hook("PointShop_RemoveHat", function(um)
 	local ply = Entity(um:ReadLong())
 	local item_id = um:ReadString()
 	
-	if not ply or not item_id then return end
+	if not ply or not ply:IsValid() or not item_id then return end
 	if not ply._Hats then return end
 	if not ply._Hats[item_id] then return end
 	
@@ -241,7 +242,7 @@ hook.Add("PostPlayerDraw", "PointShop_PostPlayerDraw", function(ply)
 	if not ply:Alive() or ply:IsObserver() then return end
 	if not POINTSHOP.Config.AlwaysDrawHats and not hook.Call("ShouldDrawHats", GAMEMODE) and ply == LocalPlayer() and GetViewEntity():GetClass() == "player" then return end
 	
-	if ply._Hats and #ply._Hats then
+	if ply._Hats then
 		for id, hat in pairs(ply._Hats) do
 			local pos = Vector()
 			local ang = Angle()
@@ -259,7 +260,10 @@ hook.Add("PostPlayerDraw", "PointShop_PostPlayerDraw", function(ply)
 			hat.Model, pos, ang = hat.Modify(hat.Model, pos, ang)
 			hat.Model:SetPos(pos)
 			hat.Model:SetAngles(ang)
-			hat.Model:DrawModel()
+			if hat.Model.LastDrawTime ~= CurTime() then
+				hat.Model:DrawModel()
+			end
+			hat.Model.LastDrawTime = CurTime()
 		end
 	end
 end)
