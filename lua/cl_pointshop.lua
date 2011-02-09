@@ -239,7 +239,7 @@ hook.Add("Initialize", "PointShop_DColumnSheet_AddSheet_Override", function()
 end)
 
 hook.Add("PostPlayerDraw", "PointShop_PostPlayerDraw", function(ply)
-	if not ply:Alive() or ply:IsObserver() then return end
+	if not ply:Alive() or (ply.IsObserver and ply:IsObserver()) then return end
 	if not POINTSHOP.Config.AlwaysDrawHats and not hook.Call("ShouldDrawHats", GAMEMODE) and ply == LocalPlayer() and GetViewEntity():GetClass() == "player" then return end
 	
 	if ply._Hats then

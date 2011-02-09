@@ -1,6 +1,6 @@
 ITEM.Name = "Low Gravity"
 ITEM.Enabled = true
-ITEM.Description = "Each upgrade lowers your gravity by 50."
+ITEM.Description = "Each upgrade lowers your gravity by 100."
 ITEM.Cost = 125
 ITEM.Model = "models/weapons/w_toolgun.mdl"
 ITEM.Maximum = 4

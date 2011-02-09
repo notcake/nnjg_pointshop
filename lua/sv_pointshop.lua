@@ -12,6 +12,25 @@ function _R.Player:IsObserver()
 	return self:GetObserverMode() > OBS_MODE_NONE
 end
 
+hook.Add("Tick", "PointShop_RemoveObserverHats", function()
+	for _, v in ipairs(player.GetAll()) do
+		if v.Hat then
+			if not v:Alive() or v:IsObserver() then
+				SafeRemoveEntity(v.Hat)
+				v.Hat = nil
+			end
+		end
+	end
+	for _, v in ipairs(ents.FindByClass("pointshop_hat")) do
+		local owner = v:GetOwner()
+		if owner then
+			if not owner:Alive() or owner:IsObserver() then
+				SafeRemoveEntity(v)
+			end
+		end
+	end
+end)
+
 hook.Add("PlayerDeath", "PointShop_PlayerDeath", function(victim, inflictor, attacker)
 	if attacker:IsPlayer() and attacker:IsValid() then
 		
