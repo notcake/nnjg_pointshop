@@ -62,6 +62,8 @@ end)
 hook.Add(KeyToHook[POINTSHOP.Config.ShopKey], "PointShop_ShopKey", function(ply)
 	if ply:Alive() and not ply:IsObserver() then
 		ply:PS_ShowShop(true)
+	else
+		ply:PS_Notify("You can only use the shop while you're alive!")
 	end
 end)
 
@@ -74,10 +76,11 @@ hook.Add("PlayerInitialSpawn", "PointShop_PlayerInitialSpawn", function(ply)
 	end)
 	
 	if POINTSHOP.Config.PointsTimer then
-		timer.Create("PointShop_" .. ply:UniqueID(), 60 * POINTSHOP.Config.PointsTimerDelay, 0, function(ply)
+		local uid = ply:UniqueID()
+		timer.Create("PointShop_" .. uid, 60 * POINTSHOP.Config.PointsTimerDelay, 0, function(ply)
 			if not ply then return end
 			if not ply:IsValid() then
-				timer.Destroy("PointShop_" .. ply:UniqueID())
+				timer.Destroy("PointShop_" .. uid)
 			end
 			ply:PS_GivePoints(POINTSHOP.Config.PointsTimerAmount, POINTSHOP.Config.PointsTimerDelay .. " minutes on server")
 		end, ply)

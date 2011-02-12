@@ -1,6 +1,6 @@
 include('shared.lua')
 
-ENT.RenderGroup 		= RENDERGROUP_OPAQUE
+ENT.RenderGroup 		= RENDERGROUP_BOTH
 
 function ENT:Draw()
 	if not self.ItemData then
@@ -24,6 +24,7 @@ function ENT:Draw()
 					self, attach = self.ItemData.Functions.ModifyHat(self, attach.Pos, attach.Ang)
 				end
 				
+				self:SetColor(owner:GetColor())
 				self:SetRenderOrigin( attach.Pos )
 				self:SetRenderAngles( attach.Ang )
 				self:SetupBones()
@@ -34,3 +35,5 @@ function ENT:Draw()
 		end
 	end
 end
+
+ENT.DrawTranslucent = ENT.Draw
