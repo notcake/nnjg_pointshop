@@ -18,7 +18,6 @@ ITEM.Functions = {
 ITEM.Hooks = {
 	ModifyPrimaryFireDamage = function(ply, item, weapon, damage)
 		if weapon:GetClass() == "weapon_zm_mac10" then
-			ErrorNoHalt(weapon:GetClass() .. "\n")
 			return damage + ply:PS_GetItemCount(item.ID)
 		end
 	end
