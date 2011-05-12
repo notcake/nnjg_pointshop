@@ -3,7 +3,7 @@ local LastShopCategory = nil
 usermessage.Hook("PointShop_Menu", function(um)
 	if um:ReadBool() then
 		POINTSHOP.Menu = vgui.Create("DFrameTransparent")
-		POINTSHOP.Menu:SetSize(475, 475)
+		POINTSHOP.Menu:SetSize(475 + 200, 475)
 		POINTSHOP.Menu:SetTitle("You have " .. LocalPlayer():PS_GetPoints() .. " Points available.")
 		POINTSHOP.Menu:SetVisible(true)
 		POINTSHOP.Menu:SetDraggable(true)
@@ -69,8 +69,21 @@ usermessage.Hook("PointShop_Menu", function(um)
 		Tabs:AddSheet("Shop", ShopCategoryTabs, "gui/silkicons/application_view_tile", false, false, "Browse the shop!")
 		
 		-- Inventory Tab
+		local InventoryContainerContainer = vgui.Create("DPanel", POINTSHOP.Menu)
+		local InventoryPreviewPanel = vgui.Create("DShopPreview", InventoryContainerContainer)
 		
-		local InventoryContainer = vgui.Create("DPanelList", POINTSHOP.Menu)
+		function InventoryContainerContainer:PerformLayout()
+			local frac = 0.65
+			self.InventoryContainer:SetPos(0, 0)
+			self.InventoryContainer:SetSize(self:GetWide() * frac - 2, self:GetTall())
+			
+			InventoryPreviewPanel:SetSize(self:GetWide() * (1 - frac) - 2, self:GetTall())
+			InventoryPreviewPanel:SetPos(self:GetWide() - InventoryPreviewPanel:GetWide (), 0)
+		end
+		
+		local InventoryContainer = vgui.Create("DPanelList", InventoryContainerContainer)
+		InventoryContainerContainer.InventoryContainer = InventoryContainer
+		
 		InventoryContainer:SetSize(Tabs:GetWide() - 10, Tabs:GetTall() - 30)
 		InventoryContainer:SetSpacing(5)
 		InventoryContainer:SetPadding(5)
@@ -120,27 +133,29 @@ usermessage.Hook("PointShop_Menu", function(um)
 			end
 		end
 		
-		Tabs:AddSheet("Inventory", InventoryContainer, "gui/silkicons/box", false, false, "Browse your inventory!")
+		Tabs:AddSheet("Inventory", InventoryContainerContainer, "gui/silkicons/box", false, false, "Browse your inventory!")
 		
 		-- Donator Tab
-		DonatorContainer = vgui.Create("DPanelList", POINTSHOP.Menu)
+		local DonatorContainer = vgui.Create("DPanelList", POINTSHOP.Menu)
 		DonatorContainer:SetSize(Tabs:GetWide() - 10, Tabs:GetTall() - 30)
 		DonatorContainer:SetSpacing(5)
 		DonatorContainer:SetPadding(5)
 		DonatorContainer:EnableHorizontal(true)
 		DonatorContainer:EnableVerticalScrollbar(false)
 		
-		DonatorLabel = vgui.Create("DLabel", DonatorContainer)
+		local DonatorLabel = vgui.Create("DLabel", DonatorContainer)
 		DonatorLabel:SetPos(5, 5)
 		DonatorLabel:SetText( POINTSHOP.Config.DonatorText )
 		DonatorLabel:SizeToContents()
 		
-		
 		Tabs:AddSheet("Info", DonatorContainer, "gui/silkicons/heart", false, false, "Information about this shop!")
-		
 	else
 		if POINTSHOP.Menu then
-			POINTSHOP.Menu:Remove()
+			if POINTSHOP.Menu:IsValid () then
+				POINTSHOP.Menu:SetVisible (false)
+				POINTSHOP.Menu:Remove()
+			end
+			POINTSHOP.Menu = nil
 		end
 	end
 end)

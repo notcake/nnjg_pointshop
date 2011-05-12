@@ -6,6 +6,7 @@ if SERVER then
 	AddCSLuaFile("vgui/DColumnSheet2.lua")
 	AddCSLuaFile("vgui/DShopModel.lua")
 	AddCSLuaFile("vgui/DShopMaterial.lua")
+	AddCSLuaFile("vgui/DShopPreview.lua")
 	
 	AddCSLuaFile("sh_pointshop.lua")
 	AddCSLuaFile("sh_config.lua")
@@ -25,6 +26,7 @@ if CLIENT then
 	include("vgui/DColumnSheet2.lua")
 	include("vgui/DShopModel.lua")
 	include("vgui/DShopMaterial.lua")
+	include("vgui/DShopPreview.lua")
 	
 	include("sh_pointshop.lua")
 	include("sh_config.lua")

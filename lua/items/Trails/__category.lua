@@ -43,6 +43,15 @@ hook.Add("Tick", "PointShop_RemoveTrails", function()
 			if not v:Alive() or v:IsObserver() then
 				SafeRemoveEntity( v.Trail )
 				v.Trail = nil
+				
+				if v.Trails then
+					for _, trail in pairs( v.Trails ) do
+						SafeRemoveEntity( trail )
+					end
+					v.Trails = nil
+				end
+			elseif not v.Trail:IsValid () then
+				v.Trail = nil
 			end
 		end
 	end

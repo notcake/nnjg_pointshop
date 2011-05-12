@@ -92,7 +92,7 @@ hook.Add("PlayerInitialSpawn", "PointShop_PlayerInitialSpawn", function(ply)
 end)
 
 hook.Add("DoPlayerDeath", "PointShop_CloseShop", function(ply)
-	ply:PS_ShowShop(false)
+	-- ply:PS_ShowShop(false)
 end)
 
 -- Point trading
