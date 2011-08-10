@@ -29,10 +29,10 @@ function PANEL:Init ()
 	self.CameraRotation = 180
 	
 	-- buttons
-	self.LeftButton = vgui.Create ("DShopPreviewButton", self)
+	self.LeftButton = vgui.Create ("NNJGShopPreviewButton", self)
 	self.LeftButton:SetText ("<")
 	self.LeftButton:SetSize (32, 32)
-	self.RightButton = vgui.Create ("DShopPreviewButton", self)
+	self.RightButton = vgui.Create ("NNJGShopPreviewButton", self)
 	self.RightButton:SetText (">")
 	self.RightButton:SetSize (32, 32)
 	
@@ -72,6 +72,13 @@ function PANEL:CreateRagdoll ()
 	if self.Ragdoll and self.Ragdoll:IsValid () then return end
 	
 	local mdl = LocalPlayer ():GetModel ()
+	
+	-- redirect hl2 human models to use playermodels instead.
+	local toreplace = "models/humans"
+	if mdl:sub (1, toreplace:len ()):lower () == toreplace:lower () then
+		mdl = "models/player" .. mdl:sub (toreplace:len () + 1)
+	end
+	
 	self:QueueModelCreation (mdl, function (ent)
 		self.Ragdoll = ent
 		self.Ragdoll:SetAngles (Angle (0, -15, 0))
@@ -333,8 +340,11 @@ function PANEL:ProcessModelQueue ()
 	local mdl, callback = next (self.ClientsideModelQueue, nil)
 	if not mdl then return end
 	
-	self.ClientsideModelQueue [mdl] = nil
 	local ent = ClientsideModel (mdl)
+	if not ent or not ent:IsValid () then
+		return
+	end
+	self.ClientsideModelQueue [mdl] = nil
 	self.ClientsideModelCache [mdl] = ent
 	ent:SetNoDraw (true)
 	self:Log (mdl .. " loaded.\n")
@@ -376,27 +386,14 @@ function PANEL:Think ()
 	self.LastThinkTime = RealTime ()
 end
 
-vgui.Register ("DShopPreview", PANEL, "DPanel")
+vgui.Register ("NNJGShopPreview", PANEL, "DPanel")
 
 local PANEL = {}
 function PANEL:Init ()
-	self.BackgroundColor = Color (0, 0, 0, 128)
-	self.HoverColor = Color (64, 64, 64, 128)
-	self.PressedColor = Color (0, 0, 0, 192)
 	self:SetFont ("TargetID")
 end
 
 function PANEL:ApplySchemeSettings ()
 end
 
-function PANEL:Paint ()
-	if self.Depressed then
-		draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall (), self.PressedColor)
-	elseif self.Hovered then
-		draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall (), self.HoverColor)
-	else
-		draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall (), self.BackgroundColor)
-	end
-end
-
-vgui.Register ("DShopPreviewButton", PANEL, "DButton")
+vgui.Register ("NNJGShopPreviewButton", PANEL, "NNJGShopButton")

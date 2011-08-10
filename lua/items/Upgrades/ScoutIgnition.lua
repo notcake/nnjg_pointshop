@@ -1,4 +1,4 @@
-ITEM.Name = "Incendiary Ammo"
+ITEM.Name = "Scout Incendiary Ammo"
 ITEM.Enabled = true
 ITEM.Description = "Sets targets on fire, dealing 5 damage over 5 seconds."
 ITEM.Cost = 1200

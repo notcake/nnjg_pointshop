@@ -1,4 +1,4 @@
-POINTSHOP = {}
+POINTSHOP = POINTSHOP or {}
 
 function POINTSHOP.FindItemByID(item_id)
 	for id, category in pairs(POINTSHOP.Items) do

@@ -70,8 +70,7 @@ function Player:PS_GiveItem(item_id, buy, count)
 			end
 		
 			self:PS_TakePoints(item.Cost, "bought " .. item.Functions.GetName(self, item))
-			self:PS_ShowShop(false)
-			timer.Simple(0.1, function() self:PS_ShowShop(true) end)
+			self:PS_UpdateShop()
 		end
 		
 		return true
@@ -84,8 +83,13 @@ function Player:PS_TakeItem(item_id, sell, count)
 	count = count or 1
 	if self:PS_HasItem(item_id) then
 		local item = POINTSHOP.FindItemByID(item_id)
-		local name = item_id
-		if item then name = item.Functions.GetName(self, item) end
+		local name = item and item.Functions.GetName(self, item) or item_id
+		
+		-- cannot sell items which are not visible in inventory
+		if item and item.HideInInventory and sell then
+			return false
+		end
+		
 		count = count <= self.ItemCounts[item_id] and count or self.ItemCounts[item_id]
 		self.ItemCounts[item_id] = self.ItemCounts[item_id] - count
 		if self.ItemCounts[item_id] < 1 then
@@ -109,8 +113,7 @@ function Player:PS_TakeItem(item_id, sell, count)
 		
 		if sell then
 			self:PS_GivePoints(POINTSHOP.Config.SellCost(item.Cost) * count, "sold " .. name)
-			self:PS_ShowShop(false)
-			timer.Simple(0.1, function() self:PS_ShowShop(true) end)
+			self:PS_UpdateShop()
 		end
 		
 		return true
@@ -233,6 +236,11 @@ end
 function Player:PS_ShowShop(bool)	
 	umsg.Start("PointShop_Menu", self)
 		umsg.Bool(bool)
+	umsg.End()
+end
+
+function Player:PS_UpdateShop()
+	umsg.Start("PointShop_UpdateMenu", self)
 	umsg.End()
 end
 

@@ -143,8 +143,10 @@ for id, category in pairs(POINTSHOP.Items) do
 		if category.Hooks then
 			for name, func in pairs(category.Hooks) do
 				hook.Add(name, "PointShop_Category_" .. category.Name .. "_" .. name, function(ply, ...) -- Pass any arguments through.
-					if ply:PS_HasItem(item_id) and not ply:PS_IsItemDisabled(item_id) then -- only run the hook if the player actually has this item.
-						return func(ply, item, unpack({...}))
+					for item_id, item in pairs(category.Items) do
+						if ply:PS_HasItem(item_id) and not ply:PS_IsItemDisabled(item_id) then -- only run the hook if the player actually has this item.
+							return func(ply, item, unpack({...}))
+						end
 					end
 				end)
 			end
@@ -314,6 +316,7 @@ concommand.Add("pointshop_respawn", function(ply, cmd, args)
 	end
 end)
 
+--[[
 concommand.Add("ps_givepoints", function(ply, cmd, args)
 	-- Give Points
 	if not ply:IsAdmin() then return end
@@ -334,6 +337,7 @@ concommand.Add("ps_givepoints", function(ply, cmd, args)
 		end
 	else
 		to_give:PS_GivePoints(num, "given by " .. ply:Nick() .. "!")
+		to_give:PS_UpdateShop()
 	end
 end)
 
@@ -357,6 +361,7 @@ concommand.Add("ps_takepoints", function(ply, cmd, args)
 		end
 	else
 		to_take:PS_TakePoints(num, "taken by " .. ply:Nick() .. "!")
+		to_take:PS_UpdateShop()
 	end
 end)
 
@@ -381,5 +386,7 @@ concommand.Add("ps_setpoints", function(ply, cmd, args)
 	else
 		to_set:PS_SetPoints(num)
 		to_set:PS_Notify("Points set to " .. num .. " by " .. ply:Nick() .. "!")
+		to_set:PS_UpdateShop()
 	end
 end)
+]]

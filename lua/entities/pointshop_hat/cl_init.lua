@@ -13,6 +13,7 @@ function ENT:Draw()
 	local owner = self:GetOwner()
 	
 	if owner == LocalPlayer() and GetViewEntity():GetClass() == "player" then return end
+	if LocalPlayer ():GetObserverMode () == OBS_MODE_IN_EYE and LocalPlayer ():GetObserverTarget () == owner then return end
 	
 	if owner and owner:IsValid() and owner:Alive() then
 		local attach = owner:GetAttachment(owner:LookupAttachment("eyes"))
