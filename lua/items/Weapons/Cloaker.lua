@@ -18,6 +18,6 @@ ITEM.Functions = {
 ITEM.Hooks = {
 	PlayerLoadout = function(ply, item)
 		ply:Give("weapon_ttt_cloaker")
-		ply:ConCommand("use weapon_zm_improvised")
+		--ply:ConCommand("use weapon_zm_improvised")
 	end
 }

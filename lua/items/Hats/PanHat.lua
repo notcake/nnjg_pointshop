@@ -9,5 +9,5 @@ ITEM.Functions = {
 		pos = pos + (ang:Forward() * -3) + (ang:Up() * 2) + (ang:Right() * 5.5)
 		ang:RotateAroundAxis(ang:Right(), 180)
 		return ent, {Pos = pos, Ang = ang}
-	end,
+	end
 }

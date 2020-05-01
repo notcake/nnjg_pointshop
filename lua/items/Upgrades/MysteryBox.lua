@@ -1,10 +1,10 @@
 ITEM.Name = "Mystery Box"
-ITEM.Enabled = true
+ITEM.Enabled = false
 ITEM.Description = "Contains a random item from the shop."
-ITEM.Cost = 250
+ITEM.Cost = 300
 ITEM.Model = "models/items/item_item_crate.mdl"
 ITEM.HideInInventory = true
-ITEM.Maximum = 2
+ITEM.Maximum = 4
 
 ITEM.Functions = {
 	OnBuy = function(ply, item)

@@ -1,6 +1,7 @@
 local CATEGORY = CATEGORY
 CATEGORY.Name = "Hats"
 CATEGORY.Icon = "add"
+CATEGORY.NumAllowedEnabledItems = 1
 CATEGORY.Enabled = true
 
 CATEGORY.Functions = {

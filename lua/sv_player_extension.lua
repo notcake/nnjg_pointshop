@@ -192,6 +192,17 @@ function Player:PS_IsItemDisabled(item_id)
 	return self.DisabledItems[item_id] or false
 end
 
+function Player:PS_NumEnabledItemsFromCategory(category)
+	local num = 0
+	for item_id, item in pairs(category.Items) do
+		if table.HasValue(self.Items, item_id) and
+		   not self:PS_IsItemDisabled(item_id) then
+			num = num + 1
+		end
+	end
+	return num
+end
+
 function Player:PS_NumItemsFromCategory(category)
 	local num = 0
 	for item_id, item in pairs(category.Items) do
@@ -214,9 +225,10 @@ end
 
 function Player:PS_UpdateItems()
 	self:PS_SaveItems()
-	datastream.StreamToClients(self, "PointShop_Items", self.Items)
-	datastream.StreamToClients(self, "PointShop_ItemCounts", self.ItemCounts)
-	datastream.StreamToClients(self, "PointShop_DisabledItems", self.DisabledItems)
+	
+	net.Start ("PointShop_Items")         net.WriteTable (self.Items)         net.Send (self)
+	net.Start ("PointShop_ItemCounts")    net.WriteTable (self.ItemCounts)    net.Send (self)
+	net.Start ("PointShop_DisabledItems") net.WriteTable (self.DisabledItems) net.Send (self)
 end
 
 function Player:PS_UpdateItem(item_id)
@@ -270,4 +282,8 @@ function Player:PS_SendHats()
 			SendUserMessage("PointShop_AddHat", self, ply:EntIndex(), item_id)
 		end
 	end
+end
+
+function Player:IsVIP()
+    return self:IsUserGroup("vip") or self:IsUserGroup( "operator" ) or self:IsAdmin()
 end

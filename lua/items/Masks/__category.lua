@@ -1,6 +1,7 @@
 local CATEGORY = CATEGORY
 CATEGORY.Name = "Masks"
 CATEGORY.Icon = "emoticon_smile"
+CATEGORY.NumAllowedEnabledItems = 1
 CATEGORY.Enabled = true
 
 CATEGORY.Functions = {

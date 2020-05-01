@@ -8,5 +8,5 @@ ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
 		pos = pos + (ang:Forward() * -2)
 		return ent, {Pos = pos, Ang = ang}
-	end,
+	end
 }

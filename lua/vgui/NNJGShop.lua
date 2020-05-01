@@ -1,17 +1,18 @@
 local PANEL = {}
 
 function PANEL:Init ()
-	self:SetTitle ("NNJG Shop")
+	self:SetTitle ("www.NoNerdsJustGeeks.com Shop")
 	
 	self:SetSize (ScrW () * 0.65, ScrH () * 0.655)
 	self:SetDeleteOnClose (false)
 	self:MakePopup ()
+	self:SetSkin("FusionRP")
 	
 	self.TabControl = vgui.Create ("DPropertySheet", self)
 	self.CategoryTabs = {}
 	
 	self.PointsIcon = vgui.Create ("DImage", self)
-	self.PointsIcon:SetImage ("gui/silkicons/star")
+	self.PointsIcon:SetImage ("icon16/star.png")
 	self.Points = vgui.Create ("DLabel", self)
 	self.Points:SetTextColor (Color (255, 255, 255, 255))
 	self.Points:SetExpensiveShadow (1, Color (0, 0, 0, 128))
@@ -38,7 +39,6 @@ function PANEL:PerformLayout ()
 end
 
 function PANEL:PopulateTabs ()
-	self.TabControl:Clear ()
 	self.CategoryTabs = {}
 	
 	for _, category in pairs (POINTSHOP.Items) do
@@ -47,27 +47,27 @@ function PANEL:PopulateTabs ()
 			categoryTab:SetCategory (category)
 			
 			self.CategoryTabs [category.Name] = categoryTab
-			self.TabControl:AddSheet (category.Name, categoryTab, "gui/silkicons/" .. category.Icon, false, false, category.Name)
+			self.TabControl:AddSheet (category.Name, categoryTab, "icon16/" .. category.Icon .. ".png", false, false, category.Name)
 		end
 	end
 	
 	-- Donator Tab
-	local DonatorContainer = vgui.Create ("DPanelList", self)
-	DonatorContainer:SetSpacing (5)
-	DonatorContainer:SetPadding (5)
-	DonatorContainer:EnableHorizontal (true)
-	DonatorContainer:EnableVerticalScrollbar (false)
+	local donatorContainer = vgui.Create ("DPanelList")
+	donatorContainer:SetSpacing (5)
+	donatorContainer:SetPadding (5)
+	donatorContainer:EnableHorizontal (true)
+	donatorContainer:EnableVerticalScrollbar (false)
 
-	local DonatorLabel = vgui.Create ("DLabel", DonatorContainer)
-	DonatorLabel:SetPos (5, 5)
-	DonatorLabel:SetText (POINTSHOP.Config.DonatorText)
-	DonatorLabel:SizeToContents ()
+	local donatorLabel = vgui.Create ("DLabel", donatorContainer)
+	donatorLabel:SetPos (5, 5)
+	donatorLabel:SetText (POINTSHOP.Config.DonatorText)
+	donatorLabel:SizeToContents ()
 	
-	self.TabControl:AddSheet ("Information", DonatorContainer, "gui/silkicons/heart", false, false, "Information about this shop!")
+	self.TabControl:AddSheet ("Information", donatorContainer, "icon16/heart.png", false, false, "Information about this shop!")
 end
 
 function PANEL:SetVisible (visible)
-	_R.Panel.SetVisible (self, visible)
+	debug.getregistry ().Panel.SetVisible (self, visible)
 	if visible then
 		self:Center ()
 		self:Update ()

@@ -1,6 +1,16 @@
 local PANEL = {}
 local White = Color (255, 255, 255, 255)
 
+surface.CreateFont ("NNJGShopItemHeader",
+	{
+		font = "defaultbold",
+		size = 16,
+		weight = 700,
+		antialias = true,
+		additive = false
+	}
+)
+
 function PANEL:Init ()
 	self:SetTall (72)
 	
@@ -8,7 +18,7 @@ function PANEL:Init ()
 	
 	self.ItemName = vgui.Create ("DLabel", self)
 	self.ItemName:SetTextColor (White)
-	self.ItemName:SetFont ("DefaultBold")
+	self.ItemName:SetFont ("NNJGShopItemHeader")
 	
 	self.Description = vgui.Create ("DLabel", self)
 	
@@ -23,6 +33,7 @@ function PANEL:Init ()
 	
 	self.Buy.DoClick = function (button)
 		RunConsoleCommand ("pointshop_buy", self.ItemID)
+		self:WaitForStateChange ()
 	end
 	self.Sell.DoClick = function (button)
 		RunConsoleCommand ("pointshop_sell", self.ItemID)
@@ -102,9 +113,9 @@ function PANEL:GetItemSellPrice ()
 	return POINTSHOP.Config.SellCost (self.Item.Cost) * math.max (1, LocalPlayer ():PS_GetItemCount (self.ItemID))
 end
 
-function PANEL:Paint ()
-	draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall (), Color (160, 160, 160, 255))
-	draw.RoundedBox (4, 1, 1, self:GetWide () - 2, self:GetTall () - 2, self.BackgroundColor)
+function PANEL:Paint (w, h)
+	draw.RoundedBox (4, 0, 0, w,     h,     Color (160, 160, 160, 255))
+	draw.RoundedBox (4, 1, 1, w - 2, h - 2, self.BackgroundColor)
 end
 
 function PANEL:PerformLayout ()

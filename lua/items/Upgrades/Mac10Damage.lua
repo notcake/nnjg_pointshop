@@ -1,7 +1,7 @@
 ITEM.Name = "Mac 10 Damage"
 ITEM.Enabled = true
 ITEM.Description = "Each upgrade increases damage by 1."
-ITEM.Cost = 300
+ITEM.Cost = 200
 ITEM.Model = "models/weapons/w_smg_mac10.mdl"
 ITEM.Maximum = 4
 

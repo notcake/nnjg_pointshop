@@ -6,7 +6,7 @@ ITEM.Model = "models/props_c17/streetsign004f.mdl"
 
 ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
-		ent:SetModelScale(Vector(0.7, 0.7, 0.7))
+		ent:SetModelScale(0.7)
 		pos = pos + (ang:Forward() * 3)
 		ang:RotateAroundAxis(ang:Up(), -90)
 		return ent, {Pos = pos, Ang = ang}

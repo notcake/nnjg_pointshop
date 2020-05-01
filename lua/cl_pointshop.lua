@@ -25,9 +25,23 @@ usermessage.Hook("PointShop_UpdateMenu", function(um)
 end)
 
 usermessage.Hook("PointShop_Notify", function(um)
+	--local text = um:ReadString()
+	--if text then
+	--	chat.AddText(Color(131, 255, 0), "[NNJG] ", Color(255, 255, 255), text)
+	--end
 	local text = um:ReadString()
-	if text then
-		chat.AddText(Color(131, 255, 0), "[PS] ", Color(255, 255, 255), text)
+	local clr = Color(131, 255, 0)
+
+	clr.r = um:ReadShort()
+	clr.g = um:ReadShort()
+	clr.b = um:ReadShort()
+
+	print("(004E0053) "..text)
+
+	if MSTACK then
+		MSTACK:AddColoredMessage(text, Color(131, 255, 0))
+	else
+		chat.AddText(Color(255, 255, 255), text)
 	end
 end)
 

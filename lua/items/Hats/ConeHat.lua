@@ -6,7 +6,7 @@ ITEM.Model = "models/props_junk/TrafficCone001a.mdl"
 
 ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
-		ent:SetModelScale(Vector(0.8, 0.8, 0.8))
+		ent:SetModelScale(0.8)
 		pos = pos + (ang:Forward() * -7) + (ang:Up() * 12)
 		ang:RotateAroundAxis(ang:Right(), 20)
 		return ent, {Pos = pos, Ang = ang}

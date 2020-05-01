@@ -25,31 +25,20 @@ POINTSHOP.Config.PlayerDeathAmount = 10 -- Amount to give for killing a player.
 
 POINTSHOP.Config.DonatorText = -- Donator text that will be showen in the donator Tab
 [[
-===WE ARE CURRENTLY FIXING TRAILS===
+Thanks to:
+Trivkz - Coding
+!cake - Coding
+_Undefined - Coding base PS
+All donators - You're awesome :)
 
-If you survive a round, and don't die, your trail won't re-appear 
-the following round. We are going to fix this, please be
-patient. If you don't want to buy a trail
-until it is fixed, it's fine. If you
-DO buy one, however, your trail will not
-be lost when we fix this bug,
-and no points will be lost.
+Want to earn points quickly? Want to gain an advantage?
+You've just went to the right tab! 
 
-Want to earn points quickly? For now
-people who haven't donated or aren't admin
-only gain one point for a legit kill,
-and it's hard to get points for anything
-you want. 
+Donate $10 or more to NoNerdsJustGeeks and post a donation thread in the correct forum;
+You will be added to VIP shortly when done.
 
-Want to make it a lot easier?
-Donate $10 or more to www.nonerdsjustgeeks.com
-and post a donation thread in the correct
-forum, we'll add you to VIP ASAP;
-
-You will gain two points for every legit kill, 
-lose only one point for a team-kill, and be able
-to votekick players that are breaking the rules,
-causing trouble and being general dicks.
+You'll gain two points for every legit kill, lose only one point for a team-kill,
+and be able to votekick players if an admin isn't around to handle the issues that trouble-makers bring!
 
 Also visit our website, we have other servers!
 www.nonerdsjustgeeks.com

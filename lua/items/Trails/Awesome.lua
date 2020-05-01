@@ -1,7 +1,7 @@
 ITEM.Name = "Awesome"
 ITEM.Enabled = true
-ITEM.Description = "Man I wish I had this."
-ITEM.Cost = 9001
+ITEM.Description = "Fads, oh how I loaf you."
+ITEM.Cost = 3000
 ITEM.Material = "trails/awesomeface"
 
 ITEM.Functions = {

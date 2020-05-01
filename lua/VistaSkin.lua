@@ -12,7 +12,7 @@ function PANEL:Paint()
     surface.SetMaterial( matBlurScreen )
     surface.SetDrawColor( 255, 255, 255, 255 )
       
-    matBlurScreen:SetMaterialFloat( "$blur", 5 )
+    matBlurScreen:SetFloat( "$blur", 5 )
     render.UpdateScreenEffectTexture()
       
     surface.DrawTexturedRect( x, y, ScrW(), ScrH() )

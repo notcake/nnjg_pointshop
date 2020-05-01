@@ -1,7 +1,7 @@
 ITEM.Name = "M16 Speed Upgrade"
 ITEM.Enabled = true
 ITEM.Description = "Each upgrade increases firing speed by 2%."
-ITEM.Cost = 500
+ITEM.Cost = 200
 ITEM.Model = "models/weapons/w_rif_m4a1.mdl"
 ITEM.Maximum = 5
 

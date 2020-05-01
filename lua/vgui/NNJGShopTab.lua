@@ -24,12 +24,12 @@ function PANEL:GetCategory ()
 	return self.Category
 end
 
-function PANEL:Paint ()
+function PANEL:Paint (w, h)
 	local color = Color (55, 57, 61)
 	if self.m_Skin and self.m_Skin.bg_color_dark then
 		color = self.m_Skin.bg_color_dark
 	end
-	draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall (), color)
+	draw.RoundedBox (4, 0, 0, w, h, color)
 end
 
 function PANEL:PerformLayout ()
@@ -48,7 +48,7 @@ function PANEL:PerformLayout ()
 end
 
 function PANEL:SetAlpha (alpha)
-	_R.Panel.SetAlpha (self, alpha)
+	debug.getregistry ().Panel.SetAlpha (self, alpha)
 	if alpha >= 255 and self:IsVisible () then
 		self.Preview:SetParent (self)
 	end

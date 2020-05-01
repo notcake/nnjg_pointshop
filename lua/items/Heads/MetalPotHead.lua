@@ -6,9 +6,9 @@ ITEM.Model = "models/props_c17/metalPot001a.mdl"
 
 ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
-		ent:SetModelScale(Vector(0.7, 0.7, 0.7))
+		ent:SetModelScale(0.7)
 		pos = pos + (ang:Forward() * -3) + (ang:Up() * 2)
 		ang:RotateAroundAxis(ang:Right(), 200)
 		return ent, {Pos = pos, Ang = ang}
-	end,
+	end
 }

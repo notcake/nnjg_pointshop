@@ -37,7 +37,7 @@ function PANEL:SetModel (model)
 	
 	if self.ModelPanel.Entity and self.ModelPanel.Entity:IsValid () then
 		local bboxMin, bboxMax = self.ModelPanel.Entity:GetRenderBounds ()
-		self.ModelPanel:SetCamPos (bboxMin:Distance (bboxMax) * Vector (0.75, 0.75, 0.5))
+		self.ModelPanel:SetCamPos (bboxMin:Distance (bboxMax) * Vector (0.6, 0.6, 0.3))
 		self.ModelPanel:SetLookAt ((bboxMax + bboxMin) * 0.5)
 	end
 end
@@ -48,7 +48,7 @@ function PANEL:ModelPanel_LayoutEntity (ent)
 	end
 end
 
-function PANEL:ModelPanel_Paint ()
+function PANEL:ModelPanel_Paint (w, h)
 	local left, top = 0, 0
 	local right, bottom = ScrW (), ScrH ()
 	local alpha = 1
@@ -70,7 +70,7 @@ function PANEL:ModelPanel_Paint ()
 	
 	self.colColor.a = alpha * 255
 	render.SetScissorRect (left, top, right, bottom, true)	
-	DModelPanel.Paint (self)
+	DModelPanel.Paint (self, w, h)
 	render.SetScissorRect (0, 0, ScrW (), ScrH (), false)
 end
 

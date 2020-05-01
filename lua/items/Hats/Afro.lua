@@ -6,7 +6,7 @@ ITEM.Model = "models/dav0r/hoverball.mdl"
 
 ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
-		ent:SetModelScale(Vector(1.6, 1.6, 1.6))
+		ent:SetModelScale(1.6)
 		ent:SetMaterial("models/weapons/v_stunbaton/w_shaft01a")
 		pos = pos + (ang:Forward() * -7) + (ang:Up() * 8)
 		ang:RotateAroundAxis(ang:Right(), 90)

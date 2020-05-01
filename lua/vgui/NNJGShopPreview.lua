@@ -22,6 +22,7 @@ function PANEL:Init ()
 	self.MaterialQueue = {}
 	self.MaterialsReady = {}
 	
+	self.LastPlayerModelUpdateTime = 0
 	self:CreateRagdoll ()
 	
 	self.PlayerHeight = 0
@@ -135,7 +136,7 @@ function PANEL:CreateWeapon (weapon)
 	if not self:IsModelLoading (model) then
 		if not self:IsValid () then return end
 		if self.Weapons [model] then return end
-		if model == "" or not file.Exists (model, true) then return end
+		if model == "" or not file.Exists (model, "GAME") then return end
 		
 		self:QueueModelCreation (model, function (ent)
 			self.Weapons [model] = ent
@@ -171,21 +172,27 @@ function PANEL:CreateWeapon (weapon)
 end
 
 function PANEL:DrawEntities ()	
-	-- PCallError (ents.GetByIndex (0).DrawModel, ents.GetByIndex (0))
+	-- pcall (ents.GetByIndex (0).DrawModel, ents.GetByIndex (0))
 	
 	if not self.Ragdoll or not self.Ragdoll:IsValid () then
 		self:CreateRagdoll ()
 		return
+	end
+	if LocalPlayer ():IsValid () and
+	   self.Ragdoll:GetModel () ~= LocalPlayer ():GetModel () and
+	   SysTime () - self.LastPlayerModelUpdateTime > 1 then
+		self.Ragdoll:SetModel (LocalPlayer ():GetModel ())
+		self.LastPlayerModelUpdateTime = SysTime ()
 	end
 	self.Ragdoll:UpdateSequence ()
 	self.Ragdoll:SetupBones ()
 	
 	for _, v in ipairs (ents.GetAll ()) do
 		if v:IsValid () and v:GetParent () == LocalPlayer () then
-			if v:GetClass () == "pointshop_hat" then
+			if v:GetClass () == "pointshop_hat" or v:GetClass() == "pointshop_caster" then
 				local hat = self:CreateHat (v)
 				if hat then
-					PCallError (hat.Draw, hat)
+					pcall (hat.Draw, hat)
 				end
 			elseif v:GetClass () == "env_spritetrail" then
 				local mat = v:GetModel ()
@@ -203,25 +210,27 @@ function PANEL:DrawEntities ()
 		local drawn_weapon = self:CreateWeapon (weapon)
 		if drawn_weapon then
 			drawn_weapon:Update ()
-			PCallError (drawn_weapon.DrawModel, drawn_weapon)
+			pcall (drawn_weapon.DrawModel, drawn_weapon)
 		end
 	end
 	
-	PCallError (self.Ragdoll.DrawModel, self.Ragdoll)
+	pcall (self.Ragdoll.DrawModel, self.Ragdoll)
 end
 
 function PANEL:DrawTrail (env_trail)
+	if not env_trail or type (env_trail) ~= "Entity" or not env_trail:IsValid () then return end
+
 	local segments = 8
 	render.StartBeam (segments + 1)
-	render.AddBeam (Vector (0, 0, 0), 15, 0 - RealTime () % 128, Color (env_trail:GetColor ()))
+	render.AddBeam (Vector (0, 0, 0), 15, 0 - RealTime () % 128, env_trail:GetColor () or Color (255, 255, 255, 255))
 	
-	PCallError (self.DrawTrailSegments, self, env_trail, segments)
+	pcall (self.DrawTrailSegments, self, env_trail, segments)
 	
 	render.EndBeam ()
 end
 
 function PANEL:DrawTrailSegments (env_trail, segments)
-	local col = Color (env_trail:GetColor ())
+	local col = env_trail:GetColor ()
 	local forward = Vector (0.707, 0.707, 0)
 	if self.Ragdoll and self.Ragdoll:IsValid () then
 		forward = self.Ragdoll:GetForward ()
@@ -255,8 +264,8 @@ end
 function PANEL:Log (msg)
 end
 
-function PANEL:Paint ()
-	draw.RoundedBox (4, 0, 0, self:GetWide (), self:GetTall () - 36, Vector (128, 128, 128, 255))
+function PANEL:Paint (w, h)
+	draw.RoundedBox (4, 0, 0, w, h - 36, Vector (128, 128, 128, 255))
 
 	if not LocalPlayer () or not LocalPlayer ():IsValid () then return end
 	if not LocalPlayer ():Alive () or LocalPlayer ():GetObserverMode () ~= 0 then return end
@@ -303,7 +312,7 @@ function PANEL:Paint ()
 	GetViewEntity = self.GetViewEntity
 	
 	render.SetScissorRect (x, y, x + self:GetWide (), y + self:GetTall () - 36, true)
-	PCallError (self.DrawEntities, self)
+	pcall (self.DrawEntities, self)
 	render.SetScissorRect (0, 0, 0, 0, false)
 	
 	GetViewEntity = _GetViewEntity

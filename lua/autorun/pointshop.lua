@@ -1,5 +1,3 @@
-if not datastream then require("datastream") end
-
 if SERVER then
 	AddCSLuaFile("autorun/pointshop.lua")
 	
@@ -16,6 +14,7 @@ if SERVER then
 	AddCSLuaFile("cl_player_extension.lua")
 	AddCSLuaFile("cl_pointshop.lua")
 	AddCSLuaFile("VistaSkin.lua")
+	AddCSLuaFile("Skin.lua")
 	
 	include("sh_pointshop.lua")
 	include("sh_config.lua")
@@ -38,4 +37,5 @@ if CLIENT then
 	include("cl_player_extension.lua")
 	include("cl_pointshop.lua")
 	include("VistaSkin.lua")
+	include("Skin.lua")
 end

@@ -1,7 +1,8 @@
 POINTSHOP.Items = {}
 
-for _, fname in pairs(file.FindInLua("items/*")) do
-	if #file.FindInLua("items/" .. fname .. "/__category.lua") > 0 then
+local _, categoryDirectories = file.Find("items/*", "LUA")
+for _, fname in pairs(categoryDirectories) do
+	if #file.Find("items/" .. fname .. "/__category.lua", "LUA") > 0 then
 		CATEGORY = {}
 		if SERVER then AddCSLuaFile("items/" .. fname .. "/__category.lua") end
 		include("items/" .. fname .. "/__category.lua")
@@ -11,9 +12,10 @@ for _, fname in pairs(file.FindInLua("items/*")) do
 			POINTSHOP.Items[CATEGORY.Name] = CATEGORY
 		end
 		
-		for _, name in pairs(file.FindInLua("items/" .. fname .. "/*.lua")) do
+		for _, name in pairs(file.Find("items/" .. fname .. "/*.lua", "LUA")) do
 			if name ~= "__category.lua" then
 				ITEM = {}
+				ITEM.Category = CATEGORY.Name
 				ITEM.ID = string.lower(string.sub(name, 1, -5))
 				ITEM.Maximum = 1
 				if SERVER then AddCSLuaFile("items/" .. fname .. "/" .. name) end

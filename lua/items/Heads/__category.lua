@@ -1,6 +1,7 @@
 local CATEGORY = CATEGORY
 CATEGORY.Name = "Heads"
 CATEGORY.Icon = "bomb"
+CATEGORY.NumAllowedEnabledItems = 1
 CATEGORY.Enabled = true
 
 CATEGORY.Functions = {

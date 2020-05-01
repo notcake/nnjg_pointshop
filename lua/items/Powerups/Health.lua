@@ -14,13 +14,13 @@ ITEM.Functions = {
 		return "Health Upgrade " .. tostring (ply:PS_GetItemCount(item.ID) + 1)
 	end,
 	
-	OnGive = function(ply, item, count)
-		local givehealth = ply:Health() == ply:GetMaxHealth()
-		ply:SetMaxHealth(100 + 3 * ply:PS_GetItemCount(item.ID))
-		if givehealth then
-			ply:SetHealth(ply:Health() + 3 * count)
-		end
-	end,
+	--OnGive = function(ply, item, count)
+		--local givehealth = ply:Health() == ply:GetMaxHealth()
+		--ply:SetMaxHealth(100 + 3 * ply:PS_GetItemCount(item.ID))
+		--if givehealth then
+		--	ply:SetHealth(ply:Health() + 3 * count)
+		--end
+	--end,
 	
 	OnTake = function(ply, item)
 		ply:SetMaxHealth(100)

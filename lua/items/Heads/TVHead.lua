@@ -6,8 +6,8 @@ ITEM.Model = "models/props_c17/tv_monitor01.mdl"
 
 ITEM.Functions = {
 	ModifyHat = function(ent, pos, ang)
-		ent:SetModelScale(Vector(0.8, 0.8, 0.8))
+		ent:SetModelScale(0.8)
 		pos = pos + (ang:Right() * -2) + (ang:Forward() * -3) + (ang:Up() * 0.5)
 		return ent, {Pos = pos, Ang = ang}
-	end,
+	end
 }
